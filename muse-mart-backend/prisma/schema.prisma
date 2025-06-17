@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password      String    // Hashed password
+  phone         String?   // Optional
+  createdAt     DateTime  @default(now()) @map("created_at") // Added for consistency
+  updatedAt     DateTime  @updatedAt @map("updated_at")   // Added for consistency
+  products      Product[] @relation("OwnedProducts") // A user can have many products
+  ordersAsBuyer Order[]   @relation("BuyerOrders") // A user can be a buyer in many orders
+
+  @@map("users")
+}
+
+model Category {
+  id            String        @id @default(uuid())
+  categoryName  String        @unique
+  subCategories SubCategory[]
+  products      Product[]
+
+  @@map("categories")
+}
+
+model SubCategory {
+  id              String    @id @default(uuid())
+  subCategoryName String    @unique
+  categoryId      String
+  category        Category  @relation(fields: [categoryId], references: [id])
+  products        Product[]
+
+  @@map("subcategories")
+}
+
+model Product {
+  id              String      @id @default(uuid())
+  productName     String
+  categoryName    String
+  categoryId      String
+  category        Category    @relation(fields: [categoryId], references: [id])
+  subCategoryName String
+  subCategoryId   String
+  subCategory     SubCategory @relation(fields: [subCategoryId], references: [id])
+  price           Float
+  discount        Float       @default(0)
+  // Removed image1Id and image2Id here as images will be managed via the Image model
+  productOwnerName String
+  productOwnerId  String
+  owner           User        @relation("OwnedProducts", fields: [productOwnerId], references: [id])
+  stock           StockStatus @default(IN_STOCK)
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  orders          Order[]     // A product can be in many orders
+  images          Image[]     // A product can have multiple images (one-to-many relation)
+
+  @@map("products")
+}
+
+enum StockStatus {
+  IN_STOCK
+  OUT_OF_STOCK
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  buyerName     String
+  buyerId       String
+  buyer         User        @relation("BuyerOrders", fields: [buyerId], references: [id])
+  productId     String
+  product       Product     @relation(fields: [productId], references: [id])
+  address       String
+  pincode       String
+  status        OrderStatus @default(PENDING) // Shipping status
+  phoneNumber   String
+  paymentType   PaymentType @default(CASH_ON_DELIVERY) // Added paymentType with a default
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+// New enum for PaymentType
+enum PaymentType {
+  CREDIT_CARD
+  DEBIT_CARD
+  UPI
+  NET_BANKING
+  CASH_ON_DELIVERY
+  WALLET
+}
+
+model Image {
+  id        String  @id @default(uuid())
+  imageName String  // Original file name or a generated name
+  blob      String  // Storing Base64 string directly for now (caution for large files)
+  url       String? // Optional: For future cloud storage URLs
+  productId String
+  product   Product @relation(fields: [productId], references: [id]) // Link to Product
+
+  @@map("images")
+}

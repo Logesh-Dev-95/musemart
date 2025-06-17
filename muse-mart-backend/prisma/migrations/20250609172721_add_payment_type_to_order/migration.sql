@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "PaymentType" AS ENUM ('CREDIT_CARD', 'DEBIT_CARD', 'UPI', 'NET_BANKING', 'CASH_ON_DELIVERY', 'WALLET');
+
+-- AlterTable
+ALTER TABLE "orders" ADD COLUMN     "paymentType" "PaymentType" NOT NULL DEFAULT 'CASH_ON_DELIVERY';
