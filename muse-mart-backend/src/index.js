@@ -27,7 +27,10 @@ app.use(cors({
 }));
 
 // JWT Secret (Crucial: Use a strong, unique secret and ideally load from environment variables)
-const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key_please_change_this_in_production';
+// const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key_please_change_this_in_production';
+const JWT_SECRET = process.env.JWT_SECRET ;
+console.log("JWT_SECRET",JWT_SECRET)
+
 
 // --- Authentication Middleware ---
 const authenticateToken = (req, res, next) => {
