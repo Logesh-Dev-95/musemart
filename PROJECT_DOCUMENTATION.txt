@@ -1,0 +1,736 @@
+# MUSE MART - COMPREHENSIVE PROJECT DOCUMENTATION
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+1. PROJECT OVERVIEW
+2. ARCHITECTURE & TECHNOLOGY STACK
+3. PROJECT STRUCTURE
+4. SETUP & INSTALLATION
+5. DATABASE SCHEMA
+6. API DOCUMENTATION
+7. FRONTEND COMPONENTS
+8. AUTHENTICATION & AUTHORIZATION
+9. FEATURES & FUNCTIONALITY
+10. DEPLOYMENT GUIDE
+11. TROUBLESHOOTING
+12. FUTURE ENHANCEMENTS
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+
+Muse Mart is a full-stack e-commerce platform specifically designed for artists 
+to buy and sell unique artworks. The platform connects creative individuals 
+worldwide, providing a marketplace for original art pieces across various 
+categories including paintings, pottery, glass art, and weaving.
+
+Key Features:
+- User authentication and profile management
+- Product listing and management for sellers
+- Browse and purchase artworks
+- Order management system
+- Category-based product filtering
+- Image upload and management
+- Responsive design for all devices
+- Automated order cancellation system
+
+Target Users:
+- Artists looking to sell their work
+- Art collectors and enthusiasts
+- General public interested in unique art pieces
+
+================================================================================
+2. ARCHITECTURE & TECHNOLOGY STACK
+================================================================================
+
+BACKEND STACK:
+- Runtime: Node.js
+- Framework: Express.js
+- Database: PostgreSQL
+- ORM: Prisma
+- Authentication: JWT (JSON Web Tokens)
+- Password Hashing: bcryptjs
+- File Upload: Base64 encoding (stored in database)
+- CORS: Enabled for frontend communication
+- Logging: Morgan middleware
+- Scheduling: node-cron for automated tasks
+
+FRONTEND STACK:
+- Framework: React 19.1.0
+- Routing: React Router DOM 7.6.2
+- Styling: Tailwind CSS 3.4.17
+- HTTP Client: Axios 1.9.0
+- Icons: React Icons 5.5.0
+- Date Handling: date-fns 4.1.0
+- Build Tool: Create React App
+
+DEVELOPMENT TOOLS:
+- Package Manager: npm
+- Version Control: Git
+- Development Server: nodemon (backend), react-scripts (frontend)
+- Database Migrations: Prisma migrate
+
+================================================================================
+3. PROJECT STRUCTURE
+================================================================================
+
+muse-mart/
+├── muse-mart-backend/
+│   ├── prisma/
+│   │   ├── migrations/
+│   │   │   ├── 20250605094205_init_muse_mart_db/
+│   │   │   ├── 20250605112043_update_product_and_image_schema/
+│   │   │   ├── 20250609172721_add_payment_type_to_order/
+│   │   │   └── migration_lock.toml
+│   │   ├── schema.prisma
+│   │   └── seed.js
+│   ├── src/
+│   │   └── index.js
+│   └── package.json
+│
+└── muse-mart-frontend/
+    ├── public/
+    │   ├── index.html
+    │   ├── manifest.json
+    │   └── robots.txt
+    ├── src/
+    │   ├── api/
+    │   │   ├── auth.js
+    │   │   ├── axiosConfig.js
+    │   │   ├── orders.js
+    │   │   └── products.js
+    │   ├── components/
+    │   │   ├── Footer.jsx
+    │   │   ├── InputField.jsx
+    │   │   ├── LoadingSpinner.jsx
+    │   │   ├── Navbar.jsx
+    │   │   └── ProductCard.jsx
+    │   ├── context/
+    │   │   └── AuthContext.jsx
+    │   ├── pages/
+    │   │   ├── LoginPage.jsx
+    │   │   ├── MuseMartLanding.jsx
+    │   │   ├── MyOrdersPage.jsx
+    │   │   ├── NotFoundPage.jsx
+    │   │   ├── ProductDetailsPage.jsx
+    │   │   ├── ProfilePage.jsx
+    │   │   ├── SellPage.jsx
+    │   │   └── SignupPage.jsx
+    │   ├── assets/
+    │   │   └── logo.jpg
+    │   ├── App.js
+    │   ├── index.js
+    │   └── index.css
+    ├── tailwind.config.js
+    ├── postcss.config.js
+    └── package.json
+
+================================================================================
+4. SETUP & INSTALLATION
+================================================================================
+
+PREREQUISITES:
+- Node.js (v16 or higher)
+- PostgreSQL database
+- npm package manager
+
+BACKEND SETUP:
+
+1. Navigate to backend directory:
+   cd muse-mart-backend
+
+2. Install dependencies:
+   npm install
+
+3. Create environment file (.env):
+   DATABASE_URL="postgresql://username:password@localhost:5432/musemart"
+   JWT_SECRET="your_super_secret_jwt_key_here"
+   PORT=5000
+
+4. Run database migrations:
+   npx prisma migrate dev
+
+5. Seed the database:
+   npm run seed
+
+6. Start development server:
+   npm run dev
+
+FRONTEND SETUP:
+
+1. Navigate to frontend directory:
+   cd muse-mart-frontend
+
+2. Install dependencies:
+   npm install
+
+3. Start development server:
+   npm start
+
+4. Access application:
+   http://localhost:3000
+
+PRODUCTION DEPLOYMENT:
+
+Backend:
+1. Set NODE_ENV=production
+2. Use process manager (PM2)
+3. Configure reverse proxy (Nginx)
+4. Set up SSL certificates
+
+Frontend:
+1. Build production bundle: npm run build
+2. Serve static files via web server
+3. Configure routing for SPA
+
+================================================================================
+5. DATABASE SCHEMA
+================================================================================
+
+TABLES:
+
+users
+- id: TEXT (Primary Key, UUID)
+- name: TEXT (Required)
+- email: TEXT (Unique, Required)
+- password: TEXT (Hashed, Required)
+- phone: TEXT (Optional)
+- created_at: TIMESTAMP (Default: now())
+- updated_at: TIMESTAMP (Auto-update)
+
+categories
+- id: TEXT (Primary Key, UUID)
+- categoryName: TEXT (Unique, Required)
+
+subcategories
+- id: TEXT (Primary Key, UUID)
+- subCategoryName: TEXT (Unique, Required)
+- categoryId: TEXT (Foreign Key -> categories.id)
+
+products
+- id: TEXT (Primary Key, UUID)
+- productName: TEXT (Required)
+- categoryName: TEXT (Required)
+- categoryId: TEXT (Foreign Key -> categories.id)
+- subCategoryName: TEXT (Required)
+- subCategoryId: TEXT (Foreign Key -> subcategories.id)
+- price: FLOAT (Required)
+- discount: FLOAT (Default: 0)
+- productOwnerName: TEXT (Required)
+- productOwnerId: TEXT (Foreign Key -> users.id)
+- stock: StockStatus (Enum: IN_STOCK, OUT_OF_STOCK)
+- created_at: TIMESTAMP (Default: now())
+- updated_at: TIMESTAMP (Auto-update)
+
+orders
+- id: TEXT (Primary Key, UUID)
+- buyerName: TEXT (Required)
+- buyerId: TEXT (Foreign Key -> users.id)
+- productId: TEXT (Foreign Key -> products.id)
+- address: TEXT (Required)
+- pincode: TEXT (Required)
+- status: OrderStatus (Enum: PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED)
+- phoneNumber: TEXT (Required)
+- paymentType: PaymentType (Enum: CREDIT_CARD, DEBIT_CARD, UPI, NET_BANKING, CASH_ON_DELIVERY, WALLET)
+- createdAt: TIMESTAMP (Default: now())
+- updatedAt: TIMESTAMP (Auto-update)
+
+images
+- id: TEXT (Primary Key, UUID)
+- imageName: TEXT (Required)
+- blob: TEXT (Base64 encoded image)
+- url: TEXT (Optional, for future cloud storage)
+- productId: TEXT (Foreign Key -> products.id)
+
+ENUMS:
+- StockStatus: IN_STOCK, OUT_OF_STOCK
+- OrderStatus: PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+- PaymentType: CREDIT_CARD, DEBIT_CARD, UPI, NET_BANKING, CASH_ON_DELIVERY, WALLET
+
+================================================================================
+6. API DOCUMENTATION
+================================================================================
+
+BASE URL: http://localhost:5000/api
+
+AUTHENTICATION ENDPOINTS:
+
+POST /auth/signup
+Body: { name, email, password, phone? }
+Response: { message, token, user }
+Description: Register new user
+
+POST /auth/login
+Body: { email, password }
+Response: { message, token, user }
+Description: Authenticate user
+
+GET /profile (Protected)
+Headers: Authorization: Bearer <token>
+Response: { id, name, email, phone }
+Description: Get user profile
+
+PRODUCT ENDPOINTS:
+
+GET /products
+Query: { productName?, categoryId?, subCategoryId?, minPrice?, maxPrice?, stock? }
+Response: Array of products with images
+Description: Get all products with optional filters
+
+GET /products/:id
+Response: Product object with images
+Description: Get single product details
+
+POST /products (Protected)
+Headers: Authorization: Bearer <token>
+Body: { productName, categoryId, subCategoryId, price, discount?, images, stock? }
+Response: Created product object
+Description: Add new product
+
+PUT /products/:id (Protected)
+Headers: Authorization: Bearer <token>
+Body: { price?, discount?, stock?, images? }
+Response: Updated product object
+Description: Update product (owner only)
+
+GET /my-products (Protected)
+Headers: Authorization: Bearer <token>
+Response: Array of user's products
+Description: Get products owned by authenticated user
+
+ORDER ENDPOINTS:
+
+POST /orders (Protected)
+Headers: Authorization: Bearer <token>
+Body: { productId, address, pincode, phoneNumber, paymentType }
+Response: Created order object
+Description: Place new order
+
+GET /my-orders (Protected)
+Headers: Authorization: Bearer <token>
+Response: Array of user's orders with product details
+Description: Get orders placed by authenticated user
+
+GET /received-orders (Protected)
+Headers: Authorization: Bearer <token>
+Response: Array of orders for user's products
+Description: Get orders received for user's products
+
+PATCH /orders/:id/status (Protected)
+Headers: Authorization: Bearer <token>
+Body: { status }
+Response: Updated order object
+Description: Update order status (product owner only)
+
+CATEGORY ENDPOINTS:
+
+GET /categories
+Response: Array of categories with subcategories
+Description: Get all categories
+
+GET /categories/:categoryId/subcategories
+Response: Array of subcategories
+Description: Get subcategories for specific category
+
+ERROR RESPONSES:
+- 400: Bad Request (validation errors)
+- 401: Unauthorized (no token)
+- 403: Forbidden (invalid token or insufficient permissions)
+- 404: Not Found
+- 409: Conflict (duplicate data)
+- 500: Internal Server Error
+
+================================================================================
+7. FRONTEND COMPONENTS
+================================================================================
+
+PAGES:
+
+MuseMartLanding.jsx
+- Main landing page with hero section
+- Category browsing and filtering
+- Product grid display
+- Search and filter functionality
+- Responsive design with scroll-to-top
+
+LoginPage.jsx
+- User authentication form
+- Error handling and validation
+- Redirect after successful login
+
+SignupPage.jsx
+- User registration form
+- Form validation
+- Automatic login after signup
+
+ProfilePage.jsx
+- Display user information
+- Logout functionality
+- Protected route
+
+SellPage.jsx
+- Product management dashboard
+- Add/edit product forms
+- Image upload with preview
+- Order management for sellers
+- Category and subcategory selection
+
+MyOrdersPage.jsx
+- Display user's purchase orders
+- Order status tracking
+- Shipping information display
+
+ProductDetailsPage.jsx
+- Detailed product view
+- Image gallery
+- Order placement form
+- Payment type selection
+
+NotFoundPage.jsx
+- 404 error page
+- Navigation back to home
+
+COMPONENTS:
+
+Navbar.jsx
+- Navigation menu
+- User authentication status
+- Mobile responsive menu
+- Logo and branding
+
+Footer.jsx
+- Site footer with links
+- Copyright information
+
+ProductCard.jsx
+- Product display card
+- Image, name, price display
+- Link to product details
+
+InputField.jsx
+- Reusable form input component
+- Validation and error display
+- Consistent styling
+
+LoadingSpinner.jsx
+- Loading indicator component
+- Used across the application
+
+CONTEXT:
+
+AuthContext.jsx
+- Global authentication state
+- User session management
+- Token handling
+- Login/logout functions
+
+================================================================================
+8. AUTHENTICATION & AUTHORIZATION
+================================================================================
+
+AUTHENTICATION FLOW:
+
+1. User Registration/Login:
+   - Password hashed using bcryptjs
+   - JWT token generated with user info
+   - Token stored in localStorage
+   - Default Authorization header set
+
+2. Token Validation:
+   - Middleware validates JWT on protected routes
+   - Token expiry: 1 hour
+   - Automatic logout on token expiry
+
+3. Protected Routes:
+   - Frontend: PrivateRoute component
+   - Backend: authenticateToken middleware
+
+AUTHORIZATION LEVELS:
+
+Public Access:
+- View products
+- Browse categories
+- Product details
+
+Authenticated Users:
+- Place orders
+- View profile
+- Access order history
+
+Product Owners:
+- Edit own products
+- View received orders
+- Update order status
+
+SECURITY MEASURES:
+- Password hashing (bcrypt)
+- JWT token expiration
+- CORS configuration
+- Input validation
+- SQL injection prevention (Prisma ORM)
+
+================================================================================
+9. FEATURES & FUNCTIONALITY
+================================================================================
+
+USER MANAGEMENT:
+- User registration and login
+- Profile management
+- Session handling
+- Password security
+
+PRODUCT MANAGEMENT:
+- Add/edit products
+- Image upload (Base64)
+- Category organization
+- Stock management
+- Price and discount handling
+
+ORDER SYSTEM:
+- Order placement
+- Status tracking
+- Shipping information
+- Payment type selection
+- Automatic order cancellation (24 hours)
+
+SEARCH & FILTERING:
+- Product name search
+- Category filtering
+- Price range filtering
+- Stock status filtering
+
+IMAGE HANDLING:
+- Multiple image upload
+- Base64 encoding
+- Image preview
+- Fallback images
+
+RESPONSIVE DESIGN:
+- Mobile-first approach
+- Tailwind CSS framework
+- Flexible grid layouts
+- Touch-friendly interfaces
+
+AUTOMATED TASKS:
+- Cron job for order cancellation
+- Runs hourly to cancel old pending orders
+- Configurable time threshold
+
+================================================================================
+10. DEPLOYMENT GUIDE
+================================================================================
+
+BACKEND DEPLOYMENT:
+
+1. Server Setup:
+   - Ubuntu/CentOS server
+   - Node.js installation
+   - PostgreSQL database
+   - PM2 process manager
+
+2. Environment Configuration:
+   - Production environment variables
+   - Database connection string
+   - JWT secret key
+   - Port configuration
+
+3. Database Setup:
+   - Create production database
+   - Run migrations
+   - Seed initial data
+
+4. Process Management:
+   - PM2 configuration
+   - Auto-restart on failure
+   - Log management
+
+5. Reverse Proxy:
+   - Nginx configuration
+   - SSL certificate setup
+   - Domain configuration
+
+FRONTEND DEPLOYMENT:
+
+1. Build Process:
+   - npm run build
+   - Static file generation
+   - Asset optimization
+
+2. Web Server:
+   - Nginx/Apache configuration
+   - SPA routing setup
+   - Gzip compression
+
+3. CDN Integration:
+   - Static asset delivery
+   - Image optimization
+   - Caching strategies
+
+DOCKER DEPLOYMENT:
+
+Backend Dockerfile:
+```
+FROM node:16-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 5000
+CMD ["npm", "start"]
+```
+
+Frontend Dockerfile:
+```
+FROM node:16-alpine as build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+================================================================================
+11. TROUBLESHOOTING
+================================================================================
+
+COMMON ISSUES:
+
+1. Database Connection Errors:
+   - Check DATABASE_URL format
+   - Verify PostgreSQL service status
+   - Confirm database exists
+   - Check user permissions
+
+2. Authentication Issues:
+   - Verify JWT_SECRET configuration
+   - Check token expiration
+   - Clear localStorage
+   - Validate API endpoints
+
+3. Image Upload Problems:
+   - Check file size limits
+   - Verify Base64 encoding
+   - Monitor database storage
+   - Validate image formats
+
+4. CORS Errors:
+   - Confirm frontend URL in CORS config
+   - Check request headers
+   - Verify HTTP methods
+   - Update origin settings
+
+5. Build Failures:
+   - Clear node_modules
+   - Update dependencies
+   - Check Node.js version
+   - Verify environment variables
+
+DEBUGGING TIPS:
+- Enable detailed logging
+- Use browser developer tools
+- Check network requests
+- Monitor database queries
+- Review error messages
+
+================================================================================
+12. FUTURE ENHANCEMENTS
+================================================================================
+
+PLANNED FEATURES:
+
+1. Payment Integration:
+   - Stripe/PayPal integration
+   - Secure payment processing
+   - Transaction history
+   - Refund management
+
+2. Advanced Search:
+   - Elasticsearch integration
+   - Full-text search
+   - Advanced filters
+   - Search suggestions
+
+3. Social Features:
+   - User reviews and ratings
+   - Artist profiles
+   - Social sharing
+   - Follow artists
+
+4. Mobile Application:
+   - React Native app
+   - Push notifications
+   - Offline capabilities
+   - Camera integration
+
+5. Analytics Dashboard:
+   - Sales analytics
+   - User behavior tracking
+   - Performance metrics
+   - Revenue reports
+
+6. Cloud Storage:
+   - AWS S3 integration
+   - Image optimization
+   - CDN delivery
+   - Backup strategies
+
+7. Multi-language Support:
+   - Internationalization (i18n)
+   - Multiple currencies
+   - Regional customization
+   - Localized content
+
+8. Advanced Order Management:
+   - Shipping integration
+   - Tracking numbers
+   - Delivery notifications
+   - Return management
+
+TECHNICAL IMPROVEMENTS:
+
+1. Performance Optimization:
+   - Database indexing
+   - Query optimization
+   - Caching strategies
+   - Image compression
+
+2. Security Enhancements:
+   - Two-factor authentication
+   - Rate limiting
+   - Input sanitization
+   - Security headers
+
+3. Testing:
+   - Unit tests
+   - Integration tests
+   - End-to-end tests
+   - Performance tests
+
+4. Monitoring:
+   - Application monitoring
+   - Error tracking
+   - Performance metrics
+   - Health checks
+
+================================================================================
+CONTACT & SUPPORT
+================================================================================
+
+For technical support or questions about this documentation:
+- Review the troubleshooting section
+- Check the GitHub repository
+- Contact the development team
+
+Last Updated: January 2025
+Version: 1.0.0
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================

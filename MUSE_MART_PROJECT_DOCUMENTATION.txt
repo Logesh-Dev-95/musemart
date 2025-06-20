@@ -1,0 +1,624 @@
+# MUSE MART - COMPREHENSIVE PROJECT DOCUMENTATION
+
+================================================================================
+1. INTRODUCTION
+================================================================================
+
+Muse Mart is a full-stack e-commerce platform designed to foster a thriving art community by connecting artists with art enthusiasts worldwide. The platform serves as a dedicated marketplace where artists of all levels can showcase and sell their original creations, while buyers can discover and purchase unique artworks across various categories.
+
+Unlike fragmented social media selling, Muse Mart provides a professional, secure, and streamlined environment specifically tailored for art commerce. The platform features an innovative automatic order cancellation system that builds buyer trust by ensuring prompt seller response, setting it apart from traditional e-commerce platforms.
+
+Key Value Propositions:
+- Dedicated art marketplace with professional presentation
+- Secure transaction environment with multiple payment options
+- Automated trust-building mechanisms
+- Category-based organization for easy discovery
+- Direct artist-to-buyer connections
+- Mobile-responsive design for modern users
+
+================================================================================
+2. PROBLEM STATEMENT
+================================================================================
+
+The current art market landscape presents significant challenges for both artists and buyers:
+
+**For Artists:**
+- Limited reach beyond personal social media networks
+- Lack of professional selling infrastructure
+- Difficulty in managing inventory and orders
+- No dedicated platform for art-specific commerce
+- Challenges in building buyer trust online
+
+**For Buyers:**
+- Fragmented shopping experience across multiple platforms
+- Difficulty in discovering new artists and artworks
+- Concerns about transaction security and seller reliability
+- Limited ability to compare artworks and prices
+- Lack of organized categorization for art discovery
+
+**Market Gap:**
+The absence of a dedicated, trustworthy platform that caters specifically to the art community's needs, combining professional presentation with robust e-commerce functionality and trust-building features.
+
+================================================================================
+3. PROJECT OBJECTIVES
+================================================================================
+
+**Primary Objective:**
+To create a comprehensive online marketplace that facilitates seamless art transactions while building trust between artists and buyers through innovative features and professional presentation.
+
+**Specific Goals:**
+- Enable 50+ artists to register and list 200+ artworks within the first quarter
+- Facilitate 25+ successful transactions within the first month of launch
+- Achieve 95% order completion rate through automated systems
+- Maintain 99% platform uptime for reliable user experience
+- Build a community of 500+ registered users within six months
+
+**Success Metrics:**
+- User registration growth rate
+- Product listing volume
+- Transaction completion rate
+- User engagement metrics
+- Platform reliability statistics
+
+================================================================================
+4. SCOPE OF THE PROJECT
+================================================================================
+
+4.1 INCLUDED FEATURES (IMPLEMENTED)
+
+**User Management System:**
+- Secure user registration and authentication
+- JWT-based session management
+- User profile management
+- Role-based access control
+
+**Product Management:**
+- Multi-image product listings with Base64 storage
+- Category and subcategory organization
+- Price and discount management
+- Stock status tracking
+- Product editing capabilities for owners
+
+**Order Processing System:**
+- Direct product-to-order purchasing (no cart)
+- Multiple payment type support:
+  * Credit Card, Debit Card
+  * UPI, Net Banking
+  * Cash on Delivery, Digital Wallet
+- Order status tracking and management
+- Shipping information collection
+
+**Automated Trust System:**
+- 24-hour automatic order cancellation for unaccepted orders
+- Hourly cron job monitoring for order management
+- Seller notification system for pending orders
+
+**Search and Discovery:**
+- Product name search functionality
+- Category-based filtering
+- Price range filtering
+- Stock status filtering
+
+**Responsive Design:**
+- Mobile-first responsive interface
+- Touch-friendly navigation
+- Optimized image display
+- Cross-device compatibility
+
+4.2 EXCLUDED FROM CURRENT SCOPE
+
+**Advanced Features (Future Phases):**
+- Shopping cart functionality (single-item purchase model implemented)
+- Advanced search with AI recommendations
+- Social features (reviews, ratings, following)
+- Real-time messaging between users
+- Advanced analytics dashboard
+- Multi-language support
+- Third-party shipping integration
+- Advanced payment gateway features
+
+**Administrative Features:**
+- Admin dashboard for platform management
+- Advanced reporting and analytics
+- Bulk product management tools
+- Advanced user management features
+
+================================================================================
+5. TECHNICAL ARCHITECTURE
+================================================================================
+
+5.1 TECHNOLOGY STACK
+
+**Backend Technologies:**
+- Runtime: Node.js (v16+)
+- Framework: Express.js
+- Database: PostgreSQL
+- ORM: Prisma (with migrations)
+- Authentication: JWT (JSON Web Tokens)
+- Password Security: bcryptjs hashing
+- Task Scheduling: node-cron
+- Request Logging: Morgan middleware
+- Cross-Origin: CORS enabled
+
+**Frontend Technologies:**
+- Framework: React 19.1.0
+- Routing: React Router DOM 7.6.2
+- Styling: Tailwind CSS 3.4.17
+- HTTP Client: Axios 1.9.0
+- State Management: React Context API
+- Icons: React Icons 5.5.0
+- Date Handling: date-fns 4.1.0
+
+**Development Tools:**
+- Build Tool: Create React App
+- Package Manager: npm
+- Development Server: nodemon (backend)
+- Version Control: Git
+
+5.2 SYSTEM ARCHITECTURE
+
+```
+Frontend (React)
+    ↓ HTTP/HTTPS
+Backend API (Express.js)
+    ↓ Prisma ORM
+PostgreSQL Database
+    ↓ Cron Jobs
+Automated Tasks (Order Management)
+```
+
+5.3 DATABASE DESIGN
+
+**Core Tables:**
+- users: User account information and authentication
+- categories: Art category definitions (seeded)
+- subcategories: Detailed art subcategories
+- products: Product listings with owner relationships
+- orders: Order information with status tracking
+- images: Base64 encoded image storage
+
+**Key Relationships:**
+- Users → Products (one-to-many, ownership)
+- Users → Orders (one-to-many, buyer relationship)
+- Products → Orders (one-to-many)
+- Products → Images (one-to-many)
+- Categories → Subcategories (one-to-many)
+
+================================================================================
+6. FEATURES AND FUNCTIONALITY
+================================================================================
+
+6.1 USER AUTHENTICATION SYSTEM
+
+**Registration Process:**
+- Email and password-based signup
+- Optional phone number collection
+- Automatic JWT token generation
+- Immediate login after registration
+
+**Login System:**
+- Email/password authentication
+- JWT token with 1-hour expiration
+- Automatic token refresh handling
+- Secure logout with token cleanup
+
+**Security Features:**
+- bcryptjs password hashing
+- JWT token validation middleware
+- Protected route implementation
+- CORS security configuration
+
+6.2 PRODUCT MANAGEMENT
+
+**Product Creation:**
+- Multi-field product information form
+- Category and subcategory selection
+- Multiple image upload with preview
+- Price and discount configuration
+- Stock status management
+
+**Image Handling:**
+- Base64 encoding for database storage
+- Multiple images per product support
+- Image preview functionality
+- Fallback image system for missing images
+
+**Product Editing:**
+- Owner-only editing permissions
+- Price and discount updates
+- Stock status modifications
+- Image replacement capabilities
+
+6.3 ORDER PROCESSING SYSTEM
+
+**Order Placement:**
+- Single-click order placement
+- Shipping information collection
+- Payment type selection
+- Immediate order confirmation
+
+**Order Management:**
+- Status tracking (PENDING → PROCESSING → SHIPPED → DELIVERED)
+- Seller order management interface
+- Buyer order history
+- Order cancellation capabilities
+
+**Automated Order Management:**
+- 24-hour automatic cancellation for unaccepted orders
+- Hourly cron job execution
+- Database cleanup for expired orders
+- Notification system for order status changes
+
+6.4 SEARCH AND DISCOVERY
+
+**Search Functionality:**
+- Product name text search
+- Category-based filtering
+- Price range filtering
+- Stock availability filtering
+
+**Browse Experience:**
+- Category-based navigation
+- Product grid display
+- Responsive card layouts
+- Infinite scroll capability
+
+6.5 PAYMENT SYSTEM
+
+**Supported Payment Types:**
+- Credit Card payments
+- Debit Card transactions
+- UPI (Unified Payments Interface)
+- Net Banking
+- Cash on Delivery
+- Digital Wallet payments
+
+**Payment Security:**
+- Secure payment type selection
+- Order-payment linking
+- Payment status tracking
+- Transaction history
+
+================================================================================
+7. AUTOMATED SYSTEMS
+================================================================================
+
+7.1 ORDER CANCELLATION SYSTEM
+
+**Purpose:**
+Automatically cancel orders that remain in PENDING status for more than 24 hours to ensure buyer trust and platform efficiency.
+
+**Implementation:**
+- Cron job scheduled to run every hour
+- Checks for orders older than 24 hours in PENDING status
+- Automatically updates status to CANCELLED
+- Maintains database integrity and user experience
+
+**Business Logic:**
+```javascript
+// Runs every hour: '0 * * * *'
+const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+Update orders WHERE status = 'PENDING' AND createdAt < twentyFourHoursAgo
+SET status = 'CANCELLED'
+```
+
+7.2 DATABASE SEEDING
+
+**Category Initialization:**
+- Predefined art categories (Paintings, Weaving, Pottery, Glass Art)
+- Subcategory relationships
+- Consistent data structure for filtering
+
+**Data Integrity:**
+- Upsert operations to prevent duplicates
+- Relationship maintenance
+- Consistent naming conventions
+
+================================================================================
+8. API DOCUMENTATION
+================================================================================
+
+8.1 AUTHENTICATION ENDPOINTS
+
+**POST /api/auth/signup**
+- Purpose: User registration
+- Body: { name, email, password, phone? }
+- Response: { message, token, user }
+- Security: Password hashing, JWT generation
+
+**POST /api/auth/login**
+- Purpose: User authentication
+- Body: { email, password }
+- Response: { message, token, user }
+- Security: Password verification, JWT generation
+
+**GET /api/profile** (Protected)
+- Purpose: Get user profile
+- Headers: Authorization: Bearer <token>
+- Response: { id, name, email, phone }
+
+8.2 PRODUCT ENDPOINTS
+
+**GET /api/products**
+- Purpose: Get all products with filtering
+- Query Parameters: productName, categoryId, subCategoryId, minPrice, maxPrice, stock
+- Response: Array of products with images and categories
+
+**GET /api/products/:id**
+- Purpose: Get single product details
+- Response: Product object with full details and images
+
+**POST /api/products** (Protected)
+- Purpose: Create new product
+- Body: { productName, categoryId, subCategoryId, price, discount, images, stock }
+- Response: Created product with images
+
+**PUT /api/products/:id** (Protected)
+- Purpose: Update product (owner only)
+- Body: { price?, discount?, stock?, images? }
+- Response: Updated product object
+
+**GET /api/my-products** (Protected)
+- Purpose: Get user's products
+- Response: Array of user's products with full details
+
+8.3 ORDER ENDPOINTS
+
+**POST /api/orders** (Protected)
+- Purpose: Place new order
+- Body: { productId, address, pincode, phoneNumber, paymentType }
+- Response: Created order object
+
+**GET /api/my-orders** (Protected)
+- Purpose: Get user's purchase orders
+- Response: Array of orders with product details
+
+**GET /api/received-orders** (Protected)
+- Purpose: Get orders for user's products
+- Response: Array of received orders with buyer details
+
+**PATCH /api/orders/:id/status** (Protected)
+- Purpose: Update order status (product owner only)
+- Body: { status }
+- Response: Updated order object
+
+8.4 CATEGORY ENDPOINTS
+
+**GET /api/categories**
+- Purpose: Get all categories with subcategories
+- Response: Array of categories with nested subcategories
+
+**GET /api/categories/:categoryId/subcategories**
+- Purpose: Get subcategories for specific category
+- Response: Array of subcategories
+
+================================================================================
+9. SECURITY IMPLEMENTATION
+================================================================================
+
+9.1 AUTHENTICATION SECURITY
+
+**Password Security:**
+- bcryptjs hashing with salt rounds
+- No plain text password storage
+- Secure password validation
+
+**JWT Token Management:**
+- 1-hour token expiration
+- Secure token generation
+- Automatic token validation
+- Token cleanup on logout
+
+9.2 API SECURITY
+
+**Route Protection:**
+- Middleware-based authentication
+- Role-based access control
+- Owner-only resource access
+- Input validation and sanitization
+
+**CORS Configuration:**
+- Specific origin allowance
+- Method restrictions
+- Header validation
+- Secure cross-origin requests
+
+9.3 DATA SECURITY
+
+**Database Security:**
+- Prisma ORM for SQL injection prevention
+- Parameterized queries
+- Data validation at model level
+- Secure connection strings
+
+**Input Validation:**
+- Server-side validation
+- Type checking
+- Range validation
+- Sanitization of user inputs
+
+================================================================================
+10. METHODOLOGY
+================================================================================
+
+10.1 RAPID APPLICATION DEVELOPMENT (RAD)
+
+**Phase 1: Requirements Planning**
+- Stakeholder identification and engagement
+- Core functionality definition
+- Project scope and timeline establishment
+- Technology stack selection
+
+**Phase 2: User Design**
+- Wireframe and mockup creation
+- User experience design
+- Interface prototyping
+- Stakeholder feedback integration
+
+**Phase 3: Construction**
+- Modular development approach
+- Iterative feature implementation
+- Continuous testing and integration
+- Regular stakeholder reviews
+
+**Phase 4: Cutover**
+- System testing and validation
+- Production deployment
+- User training and documentation
+- Post-launch monitoring and support
+
+10.2 DEVELOPMENT TOOLS AND TECHNIQUES
+
+**Collaborative Methods:**
+- Brainstorming sessions for feature ideation
+- Stakeholder interviews for requirement gathering
+- Rapid prototyping for early validation
+- Iterative feedback incorporation
+
+**Technical Approaches:**
+- Component-based frontend architecture
+- RESTful API design
+- Database-first development
+- Automated testing integration
+
+================================================================================
+11. PROJECT SIGNIFICANCE AND IMPACT
+================================================================================
+
+11.1 ANTICIPATED OUTCOMES
+
+**For Artists:**
+- Professional platform for artwork presentation
+- Expanded market reach beyond social media
+- Streamlined order and inventory management
+- Enhanced credibility through dedicated platform
+- Direct customer relationship building
+
+**For Buyers:**
+- Centralized art discovery platform
+- Secure and trustworthy transaction environment
+- Diverse artwork selection in organized categories
+- Transparent pricing and artist information
+- Reliable order fulfillment through automated systems
+
+11.2 MEASURABLE BENEFITS
+
+**Quantitative Metrics:**
+- User registration growth rate
+- Product listing volume
+- Transaction completion rate
+- Order fulfillment time
+- Platform uptime and reliability
+
+**Qualitative Improvements:**
+- Enhanced user trust through automated systems
+- Improved art discovery experience
+- Professional presentation of artworks
+- Streamlined transaction process
+- Community building within art ecosystem
+
+11.3 LONG-TERM IMPACT
+
+**Market Transformation:**
+- Shift from fragmented social media selling to professional platform
+- Standardization of online art commerce practices
+- Increased accessibility to art for broader audience
+- Support for emerging artists through equal platform access
+
+**Community Building:**
+- Direct artist-buyer connections
+- Trust-based transaction environment
+- Professional art marketplace establishment
+- Cultural exchange through art appreciation
+
+================================================================================
+12. FUTURE ENHANCEMENTS
+================================================================================
+
+12.1 PLANNED FEATURE EXPANSIONS
+
+**Enhanced E-commerce Features:**
+- Shopping cart functionality for multiple items
+- Wishlist and favorites system
+- Advanced search with AI recommendations
+- Personalized product suggestions
+
+**Social and Community Features:**
+- User reviews and rating system
+- Artist profile pages with portfolios
+- Social sharing capabilities
+- Artist following and notification system
+
+**Advanced Payment and Shipping:**
+- Integrated payment gateway (Stripe/PayPal)
+- Real-time shipping tracking
+- International shipping support
+- Automated invoice generation
+
+**Analytics and Insights:**
+- Seller dashboard with sales analytics
+- Buyer behavior insights
+- Market trend analysis
+- Performance optimization recommendations
+
+12.2 TECHNICAL IMPROVEMENTS
+
+**Performance Optimization:**
+- Image optimization and CDN integration
+- Database query optimization
+- Caching implementation
+- Load balancing for scalability
+
+**Security Enhancements:**
+- Two-factor authentication
+- Advanced fraud detection
+- Enhanced data encryption
+- Security audit implementation
+
+**Mobile Experience:**
+- Native mobile application development
+- Push notification system
+- Offline capability
+- Camera integration for image upload
+
+12.3 SCALABILITY CONSIDERATIONS
+
+**Infrastructure Scaling:**
+- Cloud deployment strategy
+- Microservices architecture migration
+- Database sharding for large datasets
+- Auto-scaling implementation
+
+**Feature Scaling:**
+- Multi-language support
+- Multi-currency handling
+- Regional customization
+- Advanced admin tools
+
+================================================================================
+13. CONCLUSION
+================================================================================
+
+Muse Mart represents a significant advancement in online art commerce, addressing the fragmented nature of current art selling platforms through a dedicated, secure, and user-friendly marketplace. The platform's innovative features, particularly the automated order cancellation system, set new standards for trust and reliability in online art transactions.
+
+The successful implementation of core features including user management, product listings, order processing, and automated systems provides a solid foundation for future enhancements. The platform's technical architecture ensures scalability and maintainability while delivering a superior user experience for both artists and buyers.
+
+Through its comprehensive approach to art commerce, Muse Mart is positioned to become a leading platform in the online art marketplace, fostering creativity, building trust, and connecting art enthusiasts worldwide.
+
+**Key Success Factors:**
+- User-centric design approach
+- Robust technical implementation
+- Innovative trust-building features
+- Scalable architecture
+- Comprehensive security measures
+
+**Project Status:** Successfully implemented and ready for deployment
+**Next Phase:** User testing, feedback integration, and feature enhancement based on real-world usage
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================
+
+Document Version: 2.0
+Last Updated: January 2025
+Project Status: Implementation Complete
