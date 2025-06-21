@@ -21,7 +21,7 @@ app.use(morgan('dev')); // 'dev' is a concise, colorful format for development
 
 // CORS Configuration
 app.use(cors({
-  origin: 'http://localhost:3000', // Allow requests only from your React frontend
+  origin: '*', // Allow requests only from your React frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Specify allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
 }));
